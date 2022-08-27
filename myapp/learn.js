@@ -248,6 +248,10 @@ setInterval(() => {
     document.getElementById("dt").innerHTML = myDate;
 }, 1000);
 
+function anc() {
+    console.log("call");
+}
+
 
 
 
