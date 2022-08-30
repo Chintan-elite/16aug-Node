@@ -243,13 +243,54 @@ var l = [10, 20, 30, 40, 50];
 // }, 5000);
 
 
-setInterval(() => {
-    var myDate = new Date();
-    document.getElementById("dt").innerHTML = myDate;
-}, 1000);
+// setInterval(() => {
+//     var myDate = new Date();
+//     document.getElementById("dt").innerHTML = myDate;
+// }, 1000);
 
 
-abc
+// function square(k) {
+//     console.log(k * k);
+// }
+
+// square(10)
+
+
+// const square = (k) => {
+//     console.log(k * k);
+// }
+
+// square(5)
+
+function abc(k, l, cb) {
+    // console.log(k + l);
+    cb(k + l);
+}
+
+function square(a, cb) {
+    cb(a * a)
+}
+
+function qube(b, cb) {
+    cb(b * b * b, "qube of" + b)
+}
+
+const myFunction = () => {
+    abc(10, 20, (k) => {
+        square(k, (sq) => {
+            qube(sq, (qb, val) => {
+                console.log(val + " is " + qb)
+            })
+        })
+    })
+}
+
+myFunction();
+
+
+
+
+
 
 
 
