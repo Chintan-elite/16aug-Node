@@ -24,4 +24,39 @@ yargs.command({
 
 })
 
+
+yargs.command({
+    command: "read",
+    handler: function (argv) {
+
+        file.readfile();
+
+    }
+})
+
+yargs.command({
+    command: "findtitle",
+    builder: {
+        title: {
+            type: String
+        }
+    },
+    handler: function (argv) {
+        file.gettitle(argv.title)
+    }
+})
+
+yargs.command({
+    command: "remove",
+    builder: {
+        title: {
+            type: String
+        }
+    },
+    handler: function (argv) {
+        file.removetitle(argv.title)
+    }
+})
+
+
 yargs.argv
