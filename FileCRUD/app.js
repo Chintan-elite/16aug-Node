@@ -58,5 +58,28 @@ yargs.command({
     }
 })
 
+yargs.command({
+    command: "update",
+    builder: {
+        title: {
+            type: String
+        },
+        desc: {
+            type: String
+        }
+    },
+    handler: function (argv) {
+
+        const data = {
+            title: argv.title,
+            desc: argv.desc
+        }
+        file.updateFile(data)
+
+    }
+
+})
+
+
 
 yargs.argv

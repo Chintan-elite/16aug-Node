@@ -1,6 +1,25 @@
 const fs = require("fs");
 
 
+const updateFile = (data) => {
+
+    const alldata = getdata();
+
+    const duplicate = alldata.find(element => {
+        return element.title == data.title
+    })
+
+    if (!duplicate)
+        return console.log("title not exist!!");
+
+    duplicate.desc = data.desc;
+    //alldata.push(duplicate)
+    const mydata = JSON.stringify(alldata)
+    fs.writeFile("test.json", mydata, () => {
+        console.log("file written successfully");
+    })
+}
+
 const createFile = (data) => {
 
     const alldata = getdata();
@@ -67,4 +86,4 @@ const removetitle = (title) => {
     })
 }
 
-module.exports = { createFile, readfile, gettitle, removetitle }
+module.exports = { createFile, readfile, gettitle, removetitle, updateFile }
