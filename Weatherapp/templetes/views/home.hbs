@@ -37,7 +37,7 @@
 
                     <div class="form-group">
                         <label for="">City</label>
-                        <select name="city" id="city" class="form-control">
+                        <select name="city" id="city" class="form-control" onchange="getweather(value)">
                             <option value="">---Select city---</option>
                         </select>
                     </div>
@@ -55,10 +55,11 @@
                             <div class="mask" style="background-color: rgba(190, 216, 232, .5);"></div>
                         </div>
                         <div class="card-img-overlay text-dark p-5">
-                            <h4 class="mb-0">Juneau, Alaska, US</h4>
-                            <p class="display-2 my-3">1.28°C</p>
-                            <p class="mb-2">Feels Like: <strong>-1.08 °C</strong></p>
-                            <h5>Snowy</h5>
+                            <h4 class="mb-0" id="mycity">Loading..</h4>
+                            <p class="display-2 my-3" id="mytemp">Loading...</p>
+                            <p class="mb-2">Humidity <strong id="myhumidity"></strong></p>
+                            <p class="mb-2">Pressure <strong id="mypressure"></strong></p>
+
                         </div>
                     </div>
 

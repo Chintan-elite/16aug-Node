@@ -46,9 +46,10 @@ const getState = (val) => {
 
 }
 
+var scode;
 const getcities = (value) => {
 
-
+    scode = value;
     fetch(`https://api.countrystatecity.in/v1/countries/${ccode}/states/${value}/cities`, requestOptions)
         .then(response => response.json())
         .then(result => {
@@ -61,4 +62,21 @@ const getcities = (value) => {
         })
         .catch(error => console.log('error', error));
 
+}
+
+const getweather = (city) => {
+    var location = city + "," + scode + "," + ccode
+    // /alert(location)
+    fetch(`weatherdata?location=${location}`).then(result => {
+        return result.json();
+    }).then(data => {  
+        console.log(data);
+        mycity.innerHTML = data.city
+        mytemp.innerHTML = data.Temp
+        mypressure.innerHTML = data.Pressure
+        myhumidity.innerHTML = data.humidity
+
+    }).catch(err => {
+        console.log(err);
+    })
 }

@@ -32,16 +32,25 @@ app.get("/weatherdata", (req, resp) => {
         wather.getWeatherData(data.lat, data.lng, (err, tdata) => {
 
 
-            console.log(`
+            // console.log(`
 
-            city : ${data.city},
-            lat : ${data.lat},
-            lng : ${data.lng},
-            Temp : ${tdata.Temp},
-            Pressure : ${tdata.Pressure},
-            humidity : ${tdata.Humidity}
+            // city : ${data.city},
+            // lat : ${data.lat},
+            // lng : ${data.lng},
+            // Temp : ${tdata.Temp},
+            // Pressure : ${tdata.Pressure},
+            // humidity : ${tdata.Humidity}
 
-            `);
+            // `);
+
+            resp.send({
+                city: data.city,
+                lat: data.lat,
+                lng: data.lng,
+                Temp: tdata.Temp,
+                Pressure: tdata.Pressure,
+                humidity: tdata.Humidity
+            })
 
         })
 
