@@ -42,11 +42,33 @@ MongoClient.connect(url).then(database => {
     //     console.log(err);
     // })
 
-    dbo.collection("user").deleteOne({name:"Vaibhav"}).then(result => {
-        console.log(result);
+    // dbo.collection("user").deleteOne({ name: "Vaibhav" }).then(result => {
+    //     console.log(result);
+    // }).catch(err => {
+    //     console.log(err);
+    // })
+
+    dbo.collection("user").find({ name: /^..a/ }).toArray().then(result => {
+        console.log(result)
     }).catch(err => {
         console.log(err);
     })
+
+    // dbo.collection("user").find().sort({ name: -1 }).toArray().then(result => {
+    //     console.log(result)
+    // }).catch(err => {
+    //     console.log(err);
+    // })
+
+    // dbo.collection("user").find().limit(2).toArray().then(result => {
+    //     console.log(result)
+    // }).catch(err => {
+    //     console.log(err);
+    // })
+
+
+
+
 
 
 }).catch(err => {
