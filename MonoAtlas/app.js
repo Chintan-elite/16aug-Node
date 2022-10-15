@@ -85,11 +85,35 @@ const addAllProduct = () => {
 
 const getAllProduct = () => {
 
-    Product.find().then(result => {
-        console.log(result[0]);
+    Product.find({ pname: /^M/ }, { qty: 1, _id: 0 }).then(result => {
+        console.log(result);
     }).catch(err => {
         console.log(err);
     })
 }
 
 getAllProduct();
+
+const deleteProduct = () => {
+
+    Product.findByIdAndDelete("6344f52d96bef2dc074fed53").then(result => {
+        console.log(result);
+    }).catch(err => {
+        console.log(err);
+    })
+}
+
+//deleteProduct();
+const updateProduct = () => {
+
+    Product.updateOne({ pname: "Laptop" }, { pname: "Laptop", price: 1000, qty: 5 }).then(result => {
+        console.log(result);
+    }).catch(err => {
+        console.log(err);
+    })
+
+}
+
+//updateProduct();
+
+
