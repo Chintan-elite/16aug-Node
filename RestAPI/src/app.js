@@ -16,7 +16,8 @@ mongoose.connect(url).then(() => {
 const userSchema = new mongoose.Schema({
 
     firstName: {
-        type: String
+        type: String,
+        required: true
     },
     lastName: {
         type: String
@@ -85,6 +86,24 @@ app.put("/users/:id", async (req, resp) => {
     } catch (error) {
         resp.send(error)
     }
+})
+
+app.post("/allUser", (req, resp) => {
+
+    const data = req.body;
+    var dt = [];
+    for (var i = 0; i < data.length; i++) {
+        const user = new User(data[i])
+        dt[i] = user
+    }
+
+    //console.log(dt);
+
+    User.insertMany(dt).then(result => {
+        resp.send(result)
+    }).catch(err => {
+        resp.send(err)
+    })
 })
 
 app.get("*", (req, resp) => {
