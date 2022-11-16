@@ -8,6 +8,8 @@ const path = require("path")
 const hbs = require("hbs")
 const viewpath = path.join(__dirname, "../templetes/views")
 var bodyParser = require('body-parser')
+var cookieParser = require('cookie-parser')
+app.use(cookieParser())
 const url = "mongodb+srv://tops:tops123@cluster0.py7lgya.mongodb.net/crud?retryWrites=true&w=majority"
 
 mongoose.connect(url).then(() => {

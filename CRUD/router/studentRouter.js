@@ -3,7 +3,7 @@ const router = express.Router();
 const Student = require("../model/student")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
-//const auth = require("../middleware/auth")
+const auth = require("../middleware/auth")
 
 
 router.get("/", (req, resp) => {
@@ -27,7 +27,7 @@ router.post("/addStudent", async (req, resp) => {
 })
 
 
-router.get("/view", async (req, resp) => {
+router.get("/view", auth, async (req, resp) => {
     try {
         const result = await Student.find();
         resp.render("view", { data: result })
@@ -46,27 +46,31 @@ router.get("/view", async (req, resp) => {
 //         resp.send(error)
 //     }
 // })
-// router.post("/login", async (req, resp) => {
-//     try {
-//         const email = req.body.email;
-//         const pass = req.body.pass;
-//         //console.log(email + " " + pass);
-//         const result = await Student.findOne({ email: email });
-//         const isValid = await bcrypt.compare(pass, result.pass);
-//         console.log(isValid);
-//         if (!isValid) {
-//             resp.send("Invalid email or password")vs
-//             return;
-//         }
 
-//         const token = await jwt.sign({ _id: result._id }, "this isloginsecretkeyforuser")
+router.post("/userLogin", async (req, resp) => {
+    try {
+        const email = req.body.email;
+        const pass = req.body.pass;
+        //console.log(email + " " + pass);
+        const result = await Student.findOne({ email: email });
+        const isValid = await bcrypt.compare(pass, result.pass);
 
-//         resp.header("auth-token", token).send(token);
+        if (!isValid) {
+            resp.render("login", { err: "Invalid email or password" });
+            return;
+        }
 
-//         //resp.send(token)
 
-//     } catch (error) {
-//         resp.send("Invalid email or password")
-//     }
-// })
+
+        const token = await result.generatetoken();
+
+        resp.cookie("jwt", token)
+
+
+        resp.redirect("view")
+
+    } catch (error) {
+        resp.render("login", { err: "Invalid email or password1" });
+    }
+})
 module.exports = router
