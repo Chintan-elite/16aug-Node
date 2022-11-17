@@ -73,4 +73,35 @@ router.post("/userLogin", async (req, resp) => {
         resp.render("login", { err: "Invalid email or password1" });
     }
 })
+
+router.get("/logout", auth, async (req, resp) => {
+
+    const user = req.user;
+    const token = req.token;
+
+    user.Tokens = user.Tokens.filter(element => {
+        return element.token != token
+    })
+
+    console.log(user.Tokens);
+
+    await user.save()
+    await resp.clearCookie("jwt")
+    resp.render("login")
+})
+
+
+router.get("/logoutall", auth, async (req, resp) => {
+
+    const user = req.user;
+    const token = req.token;
+
+    user.Tokens = [];
+
+    await user.save()
+    await resp.clearCookie("jwt")
+    resp.render("login")
+})
+
+
 module.exports = router
