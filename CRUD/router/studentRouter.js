@@ -80,6 +80,7 @@ router.get("/logout", auth, async (req, resp) => {
     const token = req.token;
 
     user.Tokens = user.Tokens.filter(element => {
+        
         return element.token != token
     })
 

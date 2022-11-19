@@ -78,8 +78,6 @@ const removetitle = (title) => {
     })
 
 
-
-
     const mydata = JSON.stringify(newdata)
     fs.writeFile("test.json", mydata, () => {
         console.log("file remove successfully");
