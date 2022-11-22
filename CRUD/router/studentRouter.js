@@ -4,25 +4,61 @@ const Student = require("../model/student")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const auth = require("../middleware/auth")
+const multer = require("multer");
+
+
+const upload = multer({
+    storage: multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, "public/img")
+        },
+        filename: function (req, file, cb) {
+            cb(null, file.fieldname + " " + Date.now() + ".jpg")
+        }
+    })
+
+}).single("myfile")
 
 
 router.get("/", (req, resp) => {
     resp.render("reg")
 })
 
+
+
 router.get("/login", (req, resp) => {
     resp.render("login")
 })
 
-router.post("/addStudent", async (req, resp) => {
-    console.log(req.body);
-    const student = new Student(req.body);
-    try {
-        const result = await student.save();
-        console.log(result)
-        resp.render("reg", { "msg": "Registration successfully !!!" })
-    } catch (error) {
-        resp.send(error)
+router.post("/addStudent", upload, async (req, resp) => {
+
+    const id = req.body.id
+    if (id == "") {
+        const student = new Student({
+            name: req.body.name,
+            email: req.body.email,
+            pass: req.body.pass,
+            img: req.file.path
+        });
+        try {
+            const result = await student.save();
+            console.log(result)
+            resp.render("reg", { "msg": "Registration successfully !!!" })
+        } catch (error) {
+            resp.send(error)
+        }
+    }
+    else {
+
+        
+        req.body.img = req.file.path
+        try {
+            const result = await Student.findByIdAndUpdate(req.body.id, req.body)
+
+            resp.redirect("view")
+        } catch (error) {
+            resp.send(error)
+        }
     }
 })
 
@@ -80,7 +116,7 @@ router.get("/logout", auth, async (req, resp) => {
     const token = req.token;
 
     user.Tokens = user.Tokens.filter(element => {
-        
+
         return element.token != token
     })
 
@@ -102,6 +138,28 @@ router.get("/logoutall", auth, async (req, resp) => {
     await user.save()
     await resp.clearCookie("jwt")
     resp.render("login")
+})
+
+
+router.get("/delete", async (req, resp) => {
+    const _id = req.query.did
+    try {
+        const result = await Student.findByIdAndDelete(_id);
+        resp.redirect("view")
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+
+router.get("/update", async (req, resp) => {
+    const _id = req.query.uid
+    try {
+        const result = await Student.findOne({ _id: _id });
+        resp.render("reg", { data: result })
+    } catch (error) {
+        console.log(error);
+    }
 })
 
 

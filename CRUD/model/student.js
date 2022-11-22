@@ -16,7 +16,10 @@ const studentSchema = new mongoose.Schema({
         token: {
             type: String
         }
-    }]
+    }],
+    img: {
+        type: String
+    }
 
 })
 

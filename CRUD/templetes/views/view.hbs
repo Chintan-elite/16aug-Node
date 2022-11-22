@@ -36,6 +36,9 @@
                 <th>Id</th>
                 <th>Username</th>
                 <th>Email</th>
+                <th>Profile</th>
+                <th>Action</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -44,6 +47,9 @@
                 <td>{{this._id}}</td>
                 <td>{{this.name}}</td>
                 <td>{{this.email}}</td>
+                <td><img src="{{this.img}}" alt="{{this.img}}"></td>
+                <td><a href="delete?did={{this._id}}" class="btn btn-danger">Delete</a></td>
+                <td><a href="update?uid={{this._id}}" class="btn btn-primary">Update</a></td>
             </tr>
             {{/each}}
         </tbody>

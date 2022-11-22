@@ -12,6 +12,8 @@ var cookieParser = require('cookie-parser')
 app.use(cookieParser())
 const url = "mongodb+srv://tops:tops123@cluster0.py7lgya.mongodb.net/crud?retryWrites=true&w=majority"
 
+
+
 mongoose.connect(url).then(() => {
     console.log("Db connected");
 }).catch(err => {
@@ -30,7 +32,7 @@ mongoose.connect(url).then(() => {
 app.set("view engine", "hbs");
 app.set("views", viewpath)
 app.use(bodyParser.urlencoded({ extended: false }))
-
+app.use(express.static(path.join(__dirname, "../")))
 const studentrouter = require("../router/studentRouter")
 app.use("/", studentrouter)
 
