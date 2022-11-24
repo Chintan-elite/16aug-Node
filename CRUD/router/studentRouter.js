@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const auth = require("../middleware/auth")
 const multer = require("multer");
-
+const fs = require("fs")
 
 const upload = multer({
     storage: multer.diskStorage({
@@ -50,11 +50,13 @@ router.post("/addStudent", upload, async (req, resp) => {
     }
     else {
 
-        
+
         req.body.img = req.file.path
+        req.body.pass = await bcrypt.hash(req.body.pass, 10);
+
         try {
             const result = await Student.findByIdAndUpdate(req.body.id, req.body)
-
+            fs.unlinkSync(result.img)
             resp.redirect("view")
         } catch (error) {
             resp.send(error)
@@ -145,6 +147,7 @@ router.get("/delete", async (req, resp) => {
     const _id = req.query.did
     try {
         const result = await Student.findByIdAndDelete(_id);
+        fs.unlinkSync(result.img)
         resp.redirect("view")
     } catch (error) {
         console.log(error);

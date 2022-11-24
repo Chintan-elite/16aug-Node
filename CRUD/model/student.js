@@ -49,4 +49,5 @@ studentSchema.pre("save", async function (next) {
 })
 
 
+
 module.exports = new mongoose.model("Student", studentSchema)
