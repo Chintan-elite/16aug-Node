@@ -8,6 +8,7 @@ const dburl = process.env.DB_URL
 const path = require("path")
 const hbs = require("hbs")
 const viewpath = path.join(__dirname, "../templetes/view")
+const partialPath = path.join(__dirname, "../templetes/partials")
 var bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser')
 app.use(cookieParser())
@@ -22,7 +23,8 @@ app.set("view engine", "hbs");
 app.set("views", viewpath)
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, "../public")))
-
+app.use(express.static(path.join(__dirname, "../")))
+hbs.registerPartials(partialPath)
 app.use("/", require("../router/userRouter"))
 app.use("/", require("../router/adminRouter"))
 

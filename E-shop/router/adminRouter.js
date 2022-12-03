@@ -3,6 +3,25 @@ const router = express.Router()
 const Admin = require("../model/Admin")
 const jwt = require("jsonwebtoken")
 const auth = require("../middleware/auth")
+const Category = require("../model/Category")
+const Product = require("../model/Product")
+const multer = require("multer")
+
+const upload = multer({
+    storage: multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, "public/productimage")
+        },
+        filename: function (req, file, cb) {
+            cb(null, file.fieldname + " " + Date.now() + ".jpg")
+        }
+    })
+
+}).single("image")
+
+
+
+
 
 router.get("/admin", (req, resp) => {
     resp.render("admin_login")
@@ -47,10 +66,72 @@ router.get("/adminlogout", auth, (req, resp) => {
 })
 
 
-router.get("/category", auth, (req, resp) => {
-    resp.render("admin_category")
+router.get("/category", auth, async (req, resp) => {
+
+    try {
+        const allcategory = await Category.find()
+        resp.render("admin_category", { data: allcategory })
+    } catch (error) {
+        console.log(error);
+    }
+
+})
+
+router.post("/addcategory", auth, async (req, resp) => {
+    try {
+        const cat = new Category(req.body)
+        const result = await cat.save();
+        resp.redirect("category")
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+router.get("/delete", async (req, resp) => {
+    const _id = req.query.did;
+    try {
+        const result = await Category.findByIdAndDelete(_id)
+        resp.redirect("category")
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+router.get("/edit", async (req, resp) => {
+    const _id = req.query.did;
+    try {
+        const result = await Category.findOne({ _id: _id })
+        const allcategory = await Category.find()
+        resp.render("admin_category", { cdata: result, data: allcategory })
+    } catch (error) {
+        console.log(error);
+    }
 })
 
 
+
+router.get("/product", auth, async (req, resp) => {
+
+    try {
+        const allcategory = await Category.find()
+        const allProduct = await Product.find();
+        resp.render("admin_products", { cdata: allcategory, data: allProduct })
+    } catch (error) {
+        console.log(error);
+    }
+
+})
+
+router.post("/addproduct", upload, async (req, resp) => {
+
+    req.body.image = req.file.path;
+    try {
+        const prod = new Product(req.body)
+        await prod.save();
+        resp.redirect("product")
+    } catch (error) {
+        console.log(error);
+    }
+})
 
 module.exports = router
