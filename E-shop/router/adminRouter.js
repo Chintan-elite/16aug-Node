@@ -114,7 +114,11 @@ router.get("/product", auth, async (req, resp) => {
 
     try {
         const allcategory = await Category.find()
-        const allProduct = await Product.find();
+        const allProduct = await Product.aggregate([{ $lookup: { from: 'categories', localField: 'category', foreignField: '_id', as: 'category' } }])
+
+       
+
+
         resp.render("admin_products", { cdata: allcategory, data: allProduct })
     } catch (error) {
         console.log(error);

@@ -251,7 +251,9 @@
                                     <tbody>
                                         {{#each data}}
                                         <tr>
+                                            {{#each this.category}}
                                             <td>{{this.category}}</td>
+                                            {{/each}}
                                             <td>{{this.product}}</td>
                                             <td>{{this.price}}</td>
                                             <td>{{this.qty}}</td>
