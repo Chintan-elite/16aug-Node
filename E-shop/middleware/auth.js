@@ -14,6 +14,8 @@ const auth = async (req, resp, next) => {
         next()
 
     } catch (error) {
+
+        
         resp.render("admin_login", {
             msg: "please login first"
         })
