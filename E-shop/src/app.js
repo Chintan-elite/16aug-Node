@@ -11,6 +11,8 @@ const viewpath = path.join(__dirname, "../templetes/view")
 const partialPath = path.join(__dirname, "../templetes/partials")
 var bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser')
+const cors = require("cors")
+app.use(cors())
 app.use(cookieParser())
 
 mongoose.connect(dburl).then(() => {

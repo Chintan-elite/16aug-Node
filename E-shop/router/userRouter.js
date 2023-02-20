@@ -23,10 +23,17 @@ router.get("/cart", userauth, async (req, resp) => {
 
     // console.log(req.user._id);
     try {
+
         const cartdata = await Cart.aggregate([{ $match: { 'user': req.user._id } }, { $lookup: { from: 'products', localField: 'product', foreignField: '_id', as: 'products' } }])
 
-        //console.log(cartdata);
-        resp.render("cart", { procutdata: cartdata })
+        var sum = 0;
+        for (var i = 0; i < cartdata.length; i++) {
+            sum = sum + cartdata[i].total
+        }
+
+
+
+        resp.render("cart", { procutdata: cartdata, total: sum })
     } catch (error) {
         console.log(error);
     }
@@ -41,7 +48,7 @@ router.get("/addtocart", userauth, async (req, resp) => {
     try {
 
         const cartdata = await Cart.find({ user: uid });
-
+        const productdata = await Product.findOne({ _id: pid })
         const pdata = cartdata.find(element => {
             return element.product == pid;
         })
@@ -54,7 +61,8 @@ router.get("/addtocart", userauth, async (req, resp) => {
 
         const cart = new Cart({
             product: pid,
-            user: uid
+            user: uid,
+            total: productdata.price
         })
         await cart.save();
         resp.redirect("/")
@@ -80,22 +88,93 @@ router.get("/removefromcart", userauth, async (req, resp) => {
 })
 
 router.post("/changeQty", userauth, async (req, resp) => {
-    console.log(req.body.qty + " " + req.body.cartid);
+
     const cqty = req.body.qty
     const cartid = req.body.cartid
 
     try {
 
         const cartdata = await Cart.findOne({ _id: cartid });
+
+        const productdata = await Product.findOne({ _id: cartdata.product })
         const uqty = Number(cartdata.qty) + Number(cqty);
-        const data = await Cart.findByIdAndUpdate(cartid, { qty: uqty })
-        const newdata = await Cart.findOne({ _id: cartid });
-        
-        resp.json({ "qty": newdata.qty })
+        if (uqty == 0 || uqty > 10 || uqty > productdata.qty) {
+            return;
+        }
+
+        const ptotal = productdata.price * uqty
+
+
+        const data = await Cart.findByIdAndUpdate(cartid, { qty: uqty, total: ptotal })
+
+
+
+
+
+
+        resp.send("qty updated !!!")
     } catch (error) {
         console.log(error);
     }
 
+})
+
+const Order = require("../model/order")
+const nodemailer = require("nodemailer")
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'chintan.tops@gmail.com',
+        pass: 'yfhbcxnqjkylysfc'
+    }
+})
+router.get("/order", userauth, async (req, resp) => {
+    const pid = req.query.pid
+    const user = req.user;
+
+    try {
+
+        const cartData = await Cart.find({ user: user._id })
+
+        var product = [];
+        for (var i = 0; i < cartData.length; i++) {
+
+            product[i] = {
+                pid: cartData[i].product,
+                qty: cartData[i].qty
+            }
+        }
+
+        var row = "";
+        for (var i = 0; i < product.length; i++) {
+
+            const pdata = await Product.findOne({ _id: product[i].pid })
+
+            const total = product[i].qty * pdata.price;
+
+            row = row + "<tr><td>" + pdata.product + "</td><td>" + pdata.price + "</td><td>" + product[i].qty + "</td><td>" + total + "</td></tr>"
+        }
+
+        const order = new Order({ pid: pid, uid: user._id, product: product })
+        const ordata = await order.save();
+        var mailOptions = {
+            from: 'chintan.tops@gmail.com',
+            to: user.email,
+            subject: 'Order conformation',
+            html: "<h1>Order conformation</h1><h2>Order Id :" + ordata._id + " </h2> <h2>Payment Is : " + pid + "</h2><table border='1'><tr><th>Productname</th><th>Price</th><th>Qty</th><th>total</th></tr>" + row + "</table>"
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                resp.send("order confirmed !!!!")
+            }
+        });
+
+    } catch (error) {
+        console.log(error);
+    }
 })
 
 router.get("/userReg", (req, resp) => {

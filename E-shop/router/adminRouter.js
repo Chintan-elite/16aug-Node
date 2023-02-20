@@ -7,6 +7,41 @@ const Category = require("../model/Category")
 const Product = require("../model/Product")
 const multer = require("multer")
 
+
+const Razorpay = require('razorpay');
+
+
+router.get("/payment", async (req, resp) => {
+
+    try {
+
+
+        var amt = Number(req.query.amt);
+
+        var instance = new Razorpay({ key_id: 'rzp_test_WOONFY9u511Byr', key_secret: 't9ROVnSqZbzNZr59d3KLWzJO' })
+
+        var order = await instance.orders.create({
+            amount: amt * 100,
+            currency: "INR",
+            receipt: "order_rcptid_11"
+        })
+
+        // resp.json({
+        //     "success": true,
+        //     order
+        // })
+        resp.send(order)
+    } catch (error) {
+        console.log(error);
+    }
+
+})
+
+
+
+
+
+
 const upload = multer({
     storage: multer.diskStorage({
         destination: function (req, file, cb) {
@@ -116,7 +151,7 @@ router.get("/product", auth, async (req, resp) => {
         const allcategory = await Category.find()
         const allProduct = await Product.aggregate([{ $lookup: { from: 'categories', localField: 'category', foreignField: '_id', as: 'category' } }])
 
-       
+
 
 
         resp.render("admin_products", { cdata: allcategory, data: allProduct })
