@@ -159,7 +159,7 @@ router.get("/order", userauth, async (req, resp) => {
         const ordata = await order.save();
         var mailOptions = {
             from: 'chintan.tops@gmail.com',
-            to: user.email,
+            to: 'chintan.tops@gmail.com',
             subject: 'Order conformation',
             html: "<h1>Order conformation</h1><h2>Order Id :" + ordata._id + " </h2> <h2>Payment Is : " + pid + "</h2><table border='1'><tr><th>Productname</th><th>Price</th><th>Qty</th><th>total</th></tr>" + row + "</table>"
         };
