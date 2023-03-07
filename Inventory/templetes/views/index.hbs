@@ -64,19 +64,12 @@
 
                 <h1 class="text-success text-center">Home Information</h1>
                 <form action="addHome" method="post">
-                    <input type="hidden" name="id" value="{{home._id}}">
+
                     <div class="form-group">
                         <label for="homename">Homename</label>
                         <input type="text" name="homename" class="form-control" value="{{home.homename}}">
                     </div>
-                    <div class="form-group">
-                        <label for="uname">User</label>
-                        <select name="uname" id="uname" class="form-control" value="{{home.uname}}">
-                            {{#each udata}}
-                            <option value="{{this.uname}}">{{this.uname}}</option>
-                            {{/each}}
-                        </select>
-                    </div>
+
                     <div class="form-group">
 
                         <input type="submit" class="btn btn-success">
@@ -87,16 +80,15 @@
                     <thead>
                         <tr>
                             <th>Home</th>
-                            <th>User</th>
-                            <th>action</th>
+                            <th>Current</th>
                         </tr>
                     </thead>
                     <tbody>
                         {{#each hdata}}
                         <tr>
                             <td>{{this.homename}}</td>
-                            <td>{{this.uname}}</td>
-                            <td><a href="edithome?eid={{this._id}}">Edit</a></td>
+                            <td>{{this.flag}}</td>
+                            <td><a href="deletehome?did={{this._id}}">Delete</a></td>
                         </tr>
                         {{/each}}
                     </tbody>
@@ -110,7 +102,7 @@
 
     </div>
 
-
+    <a href="order">Oreder here</a>
 </body>
 
 </html>

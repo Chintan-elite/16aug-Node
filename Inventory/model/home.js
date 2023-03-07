@@ -3,12 +3,13 @@ const mongoose = require("mongoose")
 
 const homeSchema = new mongoose.Schema({
     homename: {
-        type: String
+        type: String,
+        unique: true
     },
-    uname: {
-        type: String
+    flag: {
+        type: String,
+        default: "available"
     }
-
 })
 
 module.exports = new mongoose.model("Home", homeSchema)
