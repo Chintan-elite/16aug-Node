@@ -15,6 +15,7 @@ mongoose.connect(dburl).then(() => {
 
 app.set("view engine", "hbs")
 app.set("views", path.join(__dirname, "./templetes/views"))
+hbs.registerPartials(path.join(__dirname, "./templetes/partials"))
 
 app.use("/", require("./router/userrouter"))
 

@@ -91,10 +91,17 @@ router.post("/addOrder", async (req, resp) => {
     // console.log(req.body.date);
     try {
 
-        const data = await Order.find({ $or: [{ home: { $eq: req.body.home } }, { tfrom: { $eq: req.body.home } }, { home: { $eq: req.body.tfrom } }, { tfrom: { $eq: req.body.tfrom } }] })
-                            
+        var data = 0
+        if (req.body.tfrom == undefined) {
+            data = await Order.find({ $or: [{ home: { $eq: req.body.home } }, { tfrom: { $eq: req.body.home } }] })
+        }
+        else {
 
-        console.log(data);
+            data = await Order.find({ $or: [{ home: { $eq: req.body.home } }, { tfrom: { $eq: req.body.home } }, { home: { $eq: req.body.tfrom } }, { tfrom: { $eq: req.body.tfrom } }] })
+
+        }
+
+        // console.log(data);
 
         var max = 0;
         if (data[0] != undefined) {
@@ -111,8 +118,8 @@ router.post("/addOrder", async (req, resp) => {
 
         //var gdt1 = new Date(dt1).getTime();
         var gdt2 = new Date(dt2).getTime()
-        console.log(max);
-        console.log(gdt2);
+        // console.log(max);
+        // console.log(gdt2);
         if (max > gdt2) {
             resp.render("order", { msg: "Invalid order date" })
         }
