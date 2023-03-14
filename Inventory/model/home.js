@@ -9,6 +9,9 @@ const homeSchema = new mongoose.Schema({
     flag: {
         type: String,
         default: "available"
+    },
+    uname: {
+        type: String
     }
 })
 

@@ -8,6 +8,9 @@
     <title>home</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/dataTables.bootstrap5.min.css">
+
+
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
@@ -21,20 +24,134 @@
         integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
     <script>
 
+        $(document).ready(function () {
+            $('#example').DataTable();
+            getAllorderdata();
+            userandhomeinfo();
+
+        })
+
+        function getuser(value) {
+
+            $.get("/userbyhome", { home: value }, function (rt) {
+
+                $("#udata").val(rt.uname)
+            })
+
+        }
+
+        function userandhomeinfo() {
+
+            var useroption = "";
+            var homeoption = "";
+            $.get("/homeanduserinfo", {}, function (rt) {
+
+                for (var i = 0; i < rt.home.length; i++) {
+                    homeoption = homeoption + "<option value=" + rt.home[i].homename + ">" + rt.home[i].homename + "</option>"
+                }
+
+                for (var i = 0; i < rt.user.length; i++) {
+                    useroption = useroption + "<option value=" + rt.user[i].uname + ">" + rt.user[i].uname + "</option>"
+                }
+
+                $("#userinfo").html(useroption)
+                $("#homeinfo").html(homeoption)
+            })
+        }
+
+        function gethomeinfo(value) {
+            $.get("/homeinfo", { home: value }, function (rt) {
+
+                var row = "";
+                for (var i = 0; i < rt.length; i++) {
+
+                    var tf = "";
+                    if (rt[i].tfrom != undefined) {
+                        tf = rt[i].tfrom;
+                    }
+
+                    const date = new Date(rt[i].date)
+                    var datestring = date.getDay() + 1 + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()
+
+                    row = row + " <tr><th> " + rt[i].home + "</th><th>" + rt[i].user + "</th><th>" + rt[i].date + "</th><th>" + rt[i].flag + "</th><th>" + tf + "</th></tr > "
+
+                }
+
+                $("#orderdata").html(row)
+
+            })
+        }
+
+        function getuserinfo(value) {
+            $.get("/userinfo", { user: value }, function (rt) {
+
+                var row = "";
+                for (var i = 0; i < rt.length; i++) {
+
+                    var tf = "";
+                    if (rt[i].tfrom != undefined) {
+                        tf = rt[i].tfrom;
+                    }
+
+                    const date = new Date(rt[i].date)
+                    var datestring = date.getDay() + 1 + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()
+
+                    row = row + " <tr><th> " + rt[i].home + "</th><th>" + rt[i].user + "</th><th>" + rt[i].date + "</th><th>" + rt[i].flag + "</th><th>" + tf + "</th></tr > "
+
+                }
+
+                $("#orderdata").html(row)
+
+            })
+        }
+
+        function getAllorderdata() {
+            $.get("/allorderdata", {}, function (rt) {
+
+                var row = "";
+                for (var i = 0; i < rt.length; i++) {
+
+                    var tf = "";
+                    if (rt[i].tfrom != undefined) {
+                        tf = rt[i].tfrom;
+                    }
+
+                    const date = new Date(rt[i].date)
+                    var datestring = date.getDay() + 1 + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()
+
+                    row = row + " <tr><th> " + rt[i].home + "</th><th>" + rt[i].user + "</th><th>" + rt[i].date + "</th><th>" + rt[i].flag + "</th><th>" + tf + "</th></tr > "
+
+                }
+
+                $("#orderdata").html(row)
+
+            })
+        }
+
         function getdata(value) {
 
             if (value === "cancel") {
 
-                var row = "";
-                row = row + "<div class='form-group'><label> Home</label ><select name='home' id='home' class='form-control'><option value='ii'>hii</option><select></div><div class='form - group'< label for= '' > Date</label ><input type='date' name='date' class='form-control'></div>"
+                var homeoption = "<option value='-: Select :-''>-: Select :-</option>";
+                $.get("/soldhome", {}, function (rt) {
 
-                // document.getElementById("mydata").innerHTML(row)
-                $("#mydata").html(row)
+                    for (var i = 0; i < rt.data.length; i++) {
+                        homeoption = homeoption + "<option value=" + rt.data[i].homename + ">" + rt.data[i].homename + "</option>"
+                    }
+
+
+
+                    var row = "";
+                    row = row + "<div class='form-group'><label> Home</label ><select name='home' id='home' class='form-control' onchange='getuser(value)'>" + homeoption + "</select></div><div class='form - group'< label for= '' > User</label ><input type='text' name='user' class='form-control' id='udata' readonly='true'></div><div class='form - group'< label for= ''> Date</label ><input type='date' name='date' class='form-control'></div>"
+
+                    // document.getElementById("mydata").innerHTML(row)
+                    $("#mydata").html(row)
+                })
             }
             else if (value === "sell") {
 
-                var homeoption = "";
-                var useroption = "";
+                var homeoption = "<option value='-: Select :-''>-: Select :-</option>";
+                var useroption = "<option value='-: Select :-''>-: Select :-</option>";
                 $.get("/availableHome", {}, function (rt) {
 
 
@@ -51,18 +168,36 @@
 
 
                     var row = "";
-                    row = row + "<div class='form-group'><label> Home</label ><select name='home' id='home' class='form-control'>" + homeoption + "<select></div><div class='form-group'><label>User</label><select name='user' id='user' class='form-control'>" + useroption + "</select></div ><div class='form - group'< label for= '' > Date</label ><input type='date' name='date' class='form-control'></div>"
+                    row = row + "<div class='form-group'><label> Home</label ><select name='home' id='home' class='form-control'>" + homeoption + "</select></div><div class='form-group'><label>User</label><select name='user' id='user' class='form-control'>" + useroption + "</select></div ><div class='form - group'< label for= '' > Date</label ><input type='date' name='date' class='form-control'></div>"
 
 
                     $("#mydata").html(row)
                 })
             }
             else if (value === "transfer") {
-                var row = "";
-                row = row + "<div class='form-group'><label> Home</label ><select name='home' id='home' class='form-control'><option value='ii'>hii</option><select></div><div class='form-group'><label>Transfer From</label><select name='user' id='user' class='form-control'><option value ='hii'> hii</option></select></div ><div class='form - group'< label for= '' > Date</label ><input type='date' name='date' class='form-control'></div>"
+
+                var from = "<option value='-: Select :-''>-: Select :-</option>";
+                var to = "<option value='-: Select :-''>-: Select :-</option>";
+                $.get("/transferHome", {}, function (rt) {
 
 
-                $("#mydata").html(row)
+                    for (var i = 0; i < rt.data1.length; i++) {
+                        from = from + "<option value=" + rt.data1[i].homename + ">" + rt.data1[i].homename + "</option>"
+                    }
+
+                    for (var i = 0; i < rt.data2.length; i++) {
+                        to = to + "<option value=" + rt.data2[i].homename + ">" + rt.data2[i].homename + "</option>"
+                    }
+
+
+
+
+                    var row = "";
+                    row = row + "<div class='form-group'><div class='form-group'><label>Transfer From</label><select name='tfrom' id='tfrom' class='form-control' onchange='getuser(value)'>" + from + "</select></div ><div class='form - group'< label for= '' > User</label ><input type='text' name='user' class='form-control' id='udata' readonly='true'></div><div class='form-group'><label>Transfer To</label><select name='home' id='home' class='form-control'>" + to + "</select></div ><div class='form - group'< label for= '' > Date</label ><input type='date' name='date' class='form-control'></div>"
+
+
+                    $("#mydata").html(row)
+                })
             }
             else {
                 $("#mydata").html("")
@@ -74,106 +209,118 @@
 </head>
 
 <body>
-
     <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <h1 class="text-success text-center">Order Information</h1>
-                <form action="addOrder" method="post">
+        <div>
+            <h3>
+                <a href="/">Data Table</a>
+            </h3>
 
-                    <div class="form-group">
-                        <label for="">Order Type</label>
-                        <select name="flag" id="flag" class="form-control" onchange="getdata(value)">
-                            <option value="0">---select opration---</option>
-                            <option value="cancel">Cancel</option>
-                            <option value="sell">Sell</option>
-                            <option value="transfer">Transfer</option>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h1 class="text-success text-center">Order Information</h1>
+                    <span class="text-danger">{{msg}}</span>
+                    <form action="addOrder" method="post">
+
+                        <div class="form-group">
+                            <label for="">Order Type</label>
+                            <select name="flag" id="flag" class="form-control" onchange="getdata(value)">
+                                <option value="0">---Select Opration---</option>
+                                <option value="sell">Sell</option>
+                                <option value="transfer">Transfer</option>
+                                <option value="cancel">Cancel</option>
+                            </select>
+                        </div>
+
+                        <div id="mydata">
+
+                        </div>
+                        {{!-- <div class="form-group">
+                            <label for="">Home</label>
+                            <select name="home" id="home" class="form-control">
+                                {{#each hdata}}
+                                <option value="{{this.homename}}">{{this.homename}}</option>
+                                {{/each}}
+                            </select>
+
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">User</label>
+                            <select name="user" id="user" class="form-control">
+                                {{#each udata}}
+                                <option value="{{this.uname}}">{{this.uname}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">Date</label>
+                            <input type="date" name="date" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Home</label>
+                            <select name="tfrom" id="tfrom" class="form-control">
+                                {{#each hdata}}
+                                <option value="{{this.homename}}">{{this.homename}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+
+                        --}}
+
+                        <br>
+
+                        <div class="form-group">
+
+                            <input type="submit" class="btn btn-success">
+                        </div>
+                    </form>
+
+
+
+
+                </div>
+                <div class="col-md-8">
+                    <h1 class="text-success">Order Information</h1>
+                    <div class="row">
+                        <select name="homeinfo" id="homeinfo" class="form-control col-md-5"
+                            onchange="gethomeinfo(value)">
+                            <option value="">---select home---</option>
+                        </select>
+                        <select name="userinfo" id="userinfo" class="form-control col-md-5 m-auto"
+                            onchange="getuserinfo(value)">
+                            <option value="">---select user---</option>
                         </select>
                     </div>
-
-                    <div id="mydata">
-
-                    </div>
-                    {{!-- <div class="form-group">
-                        <label for="">Home</label>
-                        <select name="home" id="home" class="form-control">
-                            {{#each hdata}}
-                            <option value="{{this.homename}}">{{this.homename}}</option>
-                            {{/each}}
-                        </select>
-
-                    </div>
-
-                    <div class="form-group">
-                        <label for="">User</label>
-                        <select name="user" id="user" class="form-control">
-                            {{#each udata}}
-                            <option value="{{this.uname}}">{{this.uname}}</option>
-                            {{/each}}
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="">Date</label>
-                        <input type="date" name="date" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="">Home</label>
-                        <select name="tfrom" id="tfrom" class="form-control">
-                            {{#each hdata}}
-                            <option value="{{this.homename}}">{{this.homename}}</option>
-                            {{/each}}
-                        </select>
-                    </div>
-
-                    --}}
-
                     <br>
+                    <table class="table" id="example">
+                        <thead>
+                            <tr>
+                                <th>Home</th>
+                                <th>User</th>
+                                <th>Date</th>
+                                <th>Flag</th>
+                                <th>Trasfer From</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderdata">
 
-                    <div class="form-group">
-
-                        <input type="submit" class="btn btn-success">
-                    </div>
-                </form>
 
 
+                        </tbody>
+
+                    </table>
 
 
+                </div>
             </div>
-            <div class="col-md-8">
-                <h1 class="text-success">Order Information</h1>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Home</th>
-                            <th>User</th>
-                            <th>Date</th>
-                            <th>Flag</th>
-                            <th>Trasfer From</th>
-                        </tr>
-                    </thead>
-                    <tbody>
 
-                        {{#each odata}}
-                        <tr>
-                            <th>{{this.home}}</th>
-                            <th>{{this.user}}</th>
-                            <th>{{this.date}}</th>
-                            <th>{{this.flag}}</th>
-                            <th>{{this.tfrom}}</th>
-                            <th><a href="deleteorder?did={{this._id}}">delete</a></th>
-                        </tr>
-                        {{/each}}
-                    </tbody>
-
-                </table>
-
-
-            </div>
         </div>
 
-    </div>
-
+        <script src="https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.3/js/dataTables.bootstrap5.min.js"></script>
 
 </body>
 
