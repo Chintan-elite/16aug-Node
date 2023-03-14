@@ -31,6 +31,16 @@
 
         })
 
+        function getValiddate(value) {
+
+            $.get("getValidDate", { home: value }, function (rt) {
+                $("#validdate").attr("min", rt);
+                $("#validdate").attr("max", "2023-03-20");
+
+            })
+
+        }
+
         function getuser(value) {
 
             $.get("/userbyhome", { home: value }, function (rt) {
@@ -168,7 +178,7 @@
 
 
                     var row = "";
-                    row = row + "<div class='form-group'><label> Home</label ><select name='home' id='home' class='form-control'>" + homeoption + "</select></div><div class='form-group'><label>User</label><select name='user' id='user' class='form-control'>" + useroption + "</select></div ><div class='form - group'< label for= '' > Date</label ><input type='date' name='date' class='form-control'></div>"
+                    row = row + "<div class='form-group'><label> Home</label ><select name='home' id='home' class='form-control' onchange='getValiddate(value)'>" + homeoption + "</select></div><div class='form-group'><label>User</label><select name='user' id='user' class='form-control'>" + useroption + "</select></div ><div class='form - group'< label for= '' > Date</label ><input type='date' name='date' class='form-control'  id='validdate'></div>"
 
 
                     $("#mydata").html(row)

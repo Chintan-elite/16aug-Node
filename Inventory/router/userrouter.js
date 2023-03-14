@@ -84,6 +84,47 @@ router.get("/order", async (req, resp) => {
     }
 })
 
+router.get("/getValidDate", async (req, resp) => {
+
+
+    try {
+        const home = req.query.home;
+        var tfrom;
+        console.log(home);
+        var data = 0
+        if (tfrom == undefined) {
+            data = await Order.find({ $or: [{ home: { $eq: home } }, { tfrom: { $eq: home } }] })
+        }
+        else {
+
+            data = await Order.find({ $or: [{ home: { $eq: home } }, { tfrom: { $eq: home } }, { home: { $eq: tfrom } }, { tfrom: { $eq: tfrom } }] })
+        }
+
+        var max = 0;
+        if (data[0] != undefined) {
+            // var dt1 = data[data.length - 1].date+
+
+            for (var i = 0; i < data.length; i++) {
+                var gdt = new Date(data[i].date).getTime();
+                if (gdt > max) {
+                    max = gdt
+                }
+            }
+        }
+
+        const mydate = new Date(max);
+        // var dt = mydate.getFullYear() + "-" + (mydate.getUTCMonth() + 1) + "-" + mydate.getDate()
+
+        var dt = mydate.toISOString();
+        var myd = dt.split("T")[0];
+        resp.send(myd)
+
+    } catch (error) {
+        console.log(error);
+    }
+
+
+})
 
 router.post("/addOrder", async (req, resp) => {
 
